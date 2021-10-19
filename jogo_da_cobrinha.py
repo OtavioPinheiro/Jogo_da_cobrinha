@@ -26,7 +26,7 @@ BLUE2 = (0, 100, 255)
 BLACK = (0, 0, 0)
 
 BLOCK_SIZE = 20
-VELOCIDADE = 40
+VELOCIDADE = 5
 
 class JogoDaCobrinha:
     def __init__(self, w=640, h=480):
@@ -65,25 +65,46 @@ class JogoDaCobrinha:
                 if event.key == pygame.K_a:
                     self.direcao = Direcao.ESQUERDA
                 elif event.key == pygame.K_d:
-                    self.direcao = Direcao.ESQUERDA
+                    self.direcao = Direcao.DIREITA
                 elif event.key == pygame.K_w:
                     self.direcao = Direcao.CIMA
                 elif event.key == pygame.K_s:
                     self.direcao = Direcao.BAIXO
 
         # 2. mover
+        # atualiza a cabeça
+        self._mover(self.direcao)
+        self.cobra.insert(0, self.cabeca)
 
         # 3. checar se o jogo acabou
+        game_over = False
+        if self._eh_colisao():
+            game_over = True
+            return game_over, self.pontuacao
 
         # 4. posicionar nova comida ou só mover
+        if self.cabeca == self.comida:
+            self.pontuacao += 1
+            self._posicionar_comida()
+        else:
+            self.cobra.pop()
 
         # 5. atualizar o ui e o clock
         self._update_ui()
         self.clock.tick(VELOCIDADE)
 
         # 6. retornar para game over e pontuação
-        game_over = False
         return game_over, self.pontuacao
+
+    def _eh_colisao(self):
+        # bate nos limites da tela
+        if self.cabeca.x > self.w - BLOCK_SIZE or self.cabeca.x < 0 or self.cabeca.y > self.h - BLOCK_SIZE or self.cabeca.y < 0:
+            return True
+        # bate nela mesma
+        if self.cabeca in self.cobra[1:]:
+            return True
+
+        return False
 
     def _update_ui(self):
         self.tela.fill(BLACK)
@@ -97,6 +118,20 @@ class JogoDaCobrinha:
         texto = font.render("Pontuação: " + str(self.pontuacao), True, WHITE)
         self.tela.blit(texto, [0, 0])
         pygame.display.flip()
+
+    def _mover(self, direcao):
+        x = self.cabeca.x
+        y = self.cabeca.y
+        if direcao == Direcao.DIREITA:
+            x += BLOCK_SIZE
+        elif direcao == Direcao.ESQUERDA:
+            x -= BLOCK_SIZE
+        elif direcao == Direcao.BAIXO:
+            y += BLOCK_SIZE
+        elif direcao == Direcao.CIMA:
+            y -= BLOCK_SIZE
+
+        self.cabeca = Ponto(x, y)
 
 if __name__ == '__main__':
     jogo = JogoDaCobrinha()
