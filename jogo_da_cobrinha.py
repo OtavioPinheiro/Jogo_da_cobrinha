@@ -9,10 +9,10 @@ font = pygame.font.SysFont('arial', 25)
 
 
 class Direcao(Enum):
-    DIREITA = "a"
-    ESQUERDA = "d"
-    CIMA = "w"
-    BAIXO = "s"
+    DIREITA = 1
+    ESQUERDA = 2
+    CIMA = 3
+    BAIXO = 4
 
 
 Ponto = namedtuple('Ponto', 'x, y')
@@ -57,6 +57,19 @@ class JogoDaCobrinha:
 
     def etapas(self):
         # 1. entrada do usuário
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    self.direcao = Direcao.ESQUERDA
+                elif event.key == pygame.K_d:
+                    self.direcao = Direcao.ESQUERDA
+                elif event.key == pygame.K_w:
+                    self.direcao = Direcao.CIMA
+                elif event.key == pygame.K_s:
+                    self.direcao = Direcao.BAIXO
 
         # 2. mover
 
