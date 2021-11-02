@@ -61,7 +61,8 @@ class JogoDaCobrinha:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            #TODO: Rever a lógica de movimentação
+            # TODO: Rever a lógica de movimentação
+            # Acrescentar uma lógica condicional para resolver o Bug de movimentação
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
                     self.direcao = Direcao.ESQUERDA
