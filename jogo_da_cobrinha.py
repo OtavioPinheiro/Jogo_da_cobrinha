@@ -61,17 +61,18 @@ class JogoDaCobrinha:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            # TODO: Rever a lógica de movimentação
-            # Acrescentar uma lógica condicional para resolver o Bug de movimentação
+
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.direcao = Direcao.ESQUERDA
-                elif event.key == pygame.K_d:
-                    self.direcao = Direcao.DIREITA
-                elif event.key == pygame.K_w:
-                    self.direcao = Direcao.CIMA
-                elif event.key == pygame.K_s:
-                    self.direcao = Direcao.BAIXO
+                if self.direcao == Direcao.DIREITA or self.direcao == Direcao.ESQUERDA:
+                    if event.key == pygame.K_w:
+                        self.direcao = Direcao.CIMA
+                    elif event.key == pygame.K_s:
+                        self.direcao = Direcao.BAIXO
+                elif self.direcao == Direcao.CIMA or self.direcao == Direcao.BAIXO:
+                    if event.key == pygame.K_d:
+                        self.direcao = Direcao.DIREITA
+                    elif event.key == pygame.K_a:
+                        self.direcao = Direcao.ESQUERDA
 
         # 2. mover
         # atualiza a cabeça
