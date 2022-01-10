@@ -46,6 +46,7 @@ class JogoDaCobrinha:
                       Ponto(self.cabeca.x - (2*BLOCK_SIZE), self.cabeca.y)]
         self.pontuacao = 0
         self.comida = None
+        self.velocidade = VELOCIDADE
         self._posicionar_comida()
 
     def _posicionar_comida(self):
@@ -64,14 +65,14 @@ class JogoDaCobrinha:
 
             if event.type == pygame.KEYDOWN:
                 if self.direcao == Direcao.DIREITA or self.direcao == Direcao.ESQUERDA:
-                    if event.key == pygame.K_w:
+                    if event.key == pygame.K_UP:
                         self.direcao = Direcao.CIMA
-                    elif event.key == pygame.K_s:
+                    elif event.key == pygame.K_DOWN:
                         self.direcao = Direcao.BAIXO
                 elif self.direcao == Direcao.CIMA or self.direcao == Direcao.BAIXO:
-                    if event.key == pygame.K_d:
+                    if event.key == pygame.K_RIGHT:
                         self.direcao = Direcao.DIREITA
-                    elif event.key == pygame.K_a:
+                    elif event.key == pygame.K_LEFT:
                         self.direcao = Direcao.ESQUERDA
 
         # 2. mover
@@ -83,21 +84,22 @@ class JogoDaCobrinha:
         game_over = False
         if self._eh_colisao():
             game_over = True
-            return game_over, self.pontuacao
+            return game_over, self.pontuacao, self.velocidade
 
         # 4. posicionar nova comida ou só mover
         if self.cabeca == self.comida:
             self.pontuacao += 1
+            self.velocidade += 1
             self._posicionar_comida()
         else:
             self.cobra.pop()
 
         # 5. atualizar o ui e o clock
         self._update_ui()
-        self.clock.tick(VELOCIDADE)
+        self.clock.tick(self.velocidade)
 
-        # 6. retornar para game over e pontuação
-        return game_over, self.pontuacao
+        # 6. retornar se foi game over, a pontuação obtida e a velocidade atingida
+        return game_over, self.pontuacao, self.velocidade
 
     def _eh_colisao(self):
         # bate nos limites da tela
@@ -118,7 +120,7 @@ class JogoDaCobrinha:
 
         pygame.draw.rect(self.tela, RED, pygame.Rect(self.comida.x, self.comida.y, BLOCK_SIZE, BLOCK_SIZE))
 
-        texto = font.render("Pontuação: " + str(self.pontuacao), True, WHITE)
+        texto = font.render("Pontuação: " + str(self.pontuacao) + "     Velocidade: " + str(self.velocidade), True, WHITE)
         self.tela.blit(texto, [0, 0])
         pygame.display.flip()
 
@@ -141,11 +143,12 @@ if __name__ == '__main__':
 
     # O jogo fica em um laço
     while True:
-        game_over, pontuacao = jogo.etapas()
+        game_over, pontuacao, velocidade = jogo.etapas()
 
         if game_over == True:
             break
-    print('Pontuação Final', pontuacao)
+    print('Pontuação Final: --> ', pontuacao)
+    print('Velocidade atingida: --> ', velocidade)
 
     # saí do laço quando der game over
     pygame.quit()
